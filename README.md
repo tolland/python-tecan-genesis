@@ -1,2 +1,6 @@
 # python-tecan-genesis
-Python module for controlling Tecan Genesis RMP 200
+Python module for controlling Tecan Genesis RSP 200
+
+
+
+

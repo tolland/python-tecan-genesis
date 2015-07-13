@@ -1,0 +1,448 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import time
+
+import tecan_funcs as t
+
+
+import sys
+
+
+if len(sys.argv)>1:
+  action = sys.argv[1]
+else:
+  action = ""
+
+
+
+
+if action == "firmware":
+
+  t.do_cmd("RFV0","M1")
+
+
+elif action == "roma":
+
+  for axis in ("X","Y","Z"):
+    for i in range(0,8):
+      t.do_cmd("RP"+axis+str(i),"R1")
+
+
+elif action == "romapos":
+
+  for axis in ("X","Y","Z"):
+    
+      t.do_cmd("RP"+axis+"0","R1")
+
+
+elif action == "roma_home":
+  
+  
+  
+  t.do_cmd("PAZ2480","R1")
+  t.do_cmd("PAR0","R1")
+  t.do_cmd("PAY0","R1")
+  t.do_cmd("PAX0","R1")
+
+elif action == "roma_x":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PAX"+str(xpos),"R1")
+
+
+elif action == "roma_rx":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PRX"+str(xpos),"R1")
+
+elif action == "roma_r":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PAR"+str(xpos),"R1")
+  
+
+  
+elif action == "roma_ry":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PRY"+str(xpos),"R1")  
+  
+  
+elif action == "roma_y":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PAY"+str(xpos),"R1")  
+  
+  
+  
+elif action == "roma_g":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PAG"+str(xpos),"R1")  
+    
+elif action == "roma_rg":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PRG"+str(xpos),"R1")  
+  
+elif action == "grippos":
+  
+  t.do_cmd("RPG0","R1")
+  
+# zero the ROMA to the current position     
+elif action == "roma_zero":
+
+  t.do_cmd("PIF","R1")
+  
+    
+  
+elif action == "roma_z":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PAZ"+str(xpos),"R1")
+  
+      
+  
+elif action == "roma_rz":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PRZ"+str(xpos),"R1")
+  
+  
+
+elif action == "liha":
+
+  for axis in ("X","Y","Z"):
+    for i in range(0,8):
+      t.do_cmd("RP"+axis+str(i),"A1")
+
+elif action == "roma_errors":
+
+  t.do_cmd("REE","R1")
+
+
+elif action == "liha_errors":
+
+  t.do_cmd("REE","A1")
+
+    
+elif action == "errors":
+  print "reading system errors"
+  for addr in ("M", "A", "P", "R","D"):
+    t.do_cmd("REE",addr+"1")
+    
+
+elif action == "lihapos":
+
+  for axis in ("X","Y","Z"):
+    
+      t.do_cmd("RP"+axis+"0","A1")
+
+  '''
+  RPZ
+Selector	
+REPORT CURRENT PARAMETER FOR Z-AXIS:
+This command reports the current parameter of the Z-axis. Only one axis parameter can be reported at a time.
+Selector:	0 = 	Report current position in 1/10 mm
+		1 = 	Report Acceleration in 1/10 mm/s2
+		2 = 	Report end speed in 1/10 mm/s
+		3 = 	Report init speed in 1/10 mm/s
+		4 = 	Report init offset in 1/10 mm
+		5 = 	Report actual machine range in 1/10 mm
+		6 = 	Report init error steps in encoder increments		
+		7 = 	Report travel position in 1/10 mm
+		8 = 	Report actual scale factor 
+		9 = 	Report slow speed in 1/10 mm/s
+		10 = 	Report axis scaling factor.
+EXAMPLE: #A1RPZ0
+Reports the current position of all Z-drives.
+RESPONSE: 1..8 Z-axis parameter.
+GENERATED ERRORS:  (3) invalid operand.
+  '''
+
+elif action == "liha_posz":
+
+  for axis in (0,7):
+    
+      t.do_cmd("RPZ"+str(axis),"A1")
+
+
+
+elif action == "init_r":
+  t.do_cmd("PIA","R1")
+  
+  print "init Roma complete"
+  
+elif action == "init":
+  t.do_cmd("PIS","M1")
+  
+  t.do_cmd("PIA","R1")
+  print "init both complete"
+
+  
+elif action == "liha_x":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PAX"+str(xpos),"A1")
+  
+elif action == "liha_rx":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PRX"+str(xpos),"A1")
+    
+elif action == "liha_y":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PAY"+str(xpos),"A1")
+  
+elif action == "liha_ry":
+  
+  xpos=sys.argv[2]
+  
+  t.do_cmd("PRY"+str(xpos),"A1")
+
+  '''
+  PRZ
++/- Z1*, ... +/- Z7*, +/- Z8*
+POSITION RELATIVE FOR Z-AXIS:
+Moves all installed tips individually in the Z-axis to positions relative to there present position, leaving the other axis unchanged. The init position is equal to the range set by the SRA command. The zero position is somewhere near the worktable. The number of Z parameter depends on the number of installed tips.
++/-Z:	distance in 0.1 mm  [(-InitOffset + 10)...Z-range set by SRA cmd]
+EXAMPLE: #A1PRZ100,-50,100,-100,50,100,200,-50
+Move the Z-axis down or up from the current position.
+RESPONSE: none
+GENERATED ERRORS:  (3) invalid operand, (7) device not init, (10) drive no load.
+  '''
+
+elif action == "liha_rz":
+  
+  xpos=sys.argv[2]
+  
+  print ",".join([str(-50) for x in range(0,8)])
+  
+  t.do_cmd("PRZ"+",".join([str(xpos) for x in range(0,8)]),"A1")
+  #t.do_cmd("PRZ"+xpos,"A1")
+
+  '''
+  PAZ
+Z1*, Z2*, Z3*, Z4*, Z5*, Z6*, Z7*, Z8*
+POSITION ABSOLUTE FOR Z-AXIS:
+Moves all installed tips individually to absolute position,  leaving the X and Y axis position unchanged. The init position is equal to the range set by the SRA command. The zero position is somewhere near the worktable. The number of Z parameter depends on the number of installed tips.
+Zi:	distance in 0.1 mm  [(-InitOffset + 10)...Z-range set by SRA cmd]
+EXAMPLE: #A1PAZ100,200,300,400,500,600,700,800
+Individual absolute moves in Z-direction
+RESPONSE: none
+GENERATED ERRORS:  (3) invalid operand, (7) device not init, (10) drive no load.
+
+
+  '''
+
+elif action == "liha_z":
+  
+  xpos=sys.argv[2]
+  
+  cmd = "PAZ"+",".join([str(xpos) for x in range(0,8)])
+  print cmd
+  
+  t.do_cmd(cmd,"A1")
+  #t.do_cmd("PAZ"+xpos,"A1")
+
+  '''
+  RSD
+  Selector, Type
+  REPORT SYSTEM DEVICES:
+  Reports the number of  devices connected to the system in binary or decimal format.
+  Selector:	0 = Report number of Arms
+      1 = Report number of Diluters
+      2 = Report number of Options
+      3 = Report number of PosIds
+      4 = Report number of Romas
+      5 = Report number of UniPorts
+      6 = Report number of OpTions
+      7 = Report number of V Options
+  Type:		0 = binary format   [0..255]
+      1 = decimal format [0...7]
+  EXAMPLE:  #M1RDS1,1
+  Report the number of Diluters in decimal format.
+  RESPONSE: see Type
+  GENERATED ERRORS:  (3) invalid operand.
+  '''
+  
+elif action == "report_system_devices":
+  
+  for i in range(0, 8):
+    
+    t.do_cmd("RDS0,"+str(i),"M1")  
+    t.do_cmd("RDS1,"+str(i),"M1")  
+
+#M1RDS1,1
+
+  '''
+  RVM
+  channel
+  REPORT THE SERVICE CHANNEL VOLT METER:
+  With this function it's possible to measure any voltages on the CU board with the Service Channel connector. The first channel (0) allows the user to measure any voltages in the range between 0..5 Volt with a resolution of 10mV. The second (1) channel has a range between 0..24 Volt with a resolution of 100mV.
+  channel:	[0..1]
+  EXAMPLE: #M1RVM0
+  Measuring the 5 Volt channel.
+  RESPONSE:  10mV increments for channel 0.	100mV increments for channel 1.
+  GENERATED ERRORS:  none.
+  '''
+
+elif action == "volt_meter":
+  
+  for i in range(0, 8):
+    
+    t.do_cmd("RVM"+str(i),"M1")
+
+#M1RDS1,1
+
+
+
+
+
+
+  '''
+GFC
+								
+GROUP FEED COMMAND:
+If several commands should be started synchrony, they can be loaded first by this command without any execution. With GSC all feed action can be started at the same time. This function supports all installed devices.
+EXAMPLE: 	#M1GFC			(start feeding process)
+		#A1MAZ500,500,500,500	(feed command to device 	#A1)
+		#D1A1000R			(feed command to device 	#D1)
+		#D2A1000R			(	“	“	“	#D2)
+		#D3A1000R			(	“	“	“	#D3)
+		#D4A1000R			(	“	“	“	#D4)
+		#M1GSC			(start all action at the same time)
+RESPONSE:  none.
+GENERATED ERRORS:  none.
+  
+  '''
+
+elif action == "group_feed_start":
+    
+  t.do_cmd("M1GFC"+str(i),"M1")
+
+elif action == "group_feed_run":
+    
+  t.do_cmd("M1GSC"+str(i),"M1")
+
+
+elif action == "group_feed_end":
+    
+  t.do_cmd("M1GFC"+str(i),"M1")
+
+  '''
+  MDT - MOVE TIP, DETECT LIQUID, SUBMERGE:
+
+TipSelect, Submerge, Z-start, Z-max, Z-add1...Z-add8
+MOVE TIP, DETECT LIQUID, SUBMERGE:
+The MDT command moves the selected tips to Z-start and then searches downward until it detects liquid or reaches Z-max. If no liquid is detected the tips will move back to their Z-travel position and an error code will be generated. If liquid is detected, the tips will be lowered by the specified Submerge distance and verify that another Add distance can be lowered before reaching Z-max. If this is not possible, an error code is generated. If the parameter TipSelect is not defined, all possible tips are used to detect liquid. If the parameters Submerge, Z-start or Z-max are not defined, the MDT command is using the individual position values. Those values can be set for each axis separately by the following commands: SBL (set submerge distance), STL (set Z-start position) ,SML (set Z-max position) and SDL (set save detection retract distance). The MDT command can handle also different detection procedures and modes which can be set by the SDM (set detection mode) command. The number of Z-add parameter depends on the number of installed tips.
+TipSelect:        binary decoded tip select [0...255]
+Submerge:        distance in 0.1 mm  [0...Z-range set by SRA cmd]
+Z-start:        distance in 0.1 mm  [0...Z-range set by SRA cmd]          
+Z-max:        distance in 0.1 mm  [0...Z-range set by SRA cmd]
+Addi:                distance in 0.1 mm. Required distance to travel downwards before reaching Z-                        Max. 
+EXAMPLE: #A1MDT170,20,1000,600
+Move tip 2, 4, 6 & 8 down to Z-start height (100 mm), then start liquid detection until Z-max          
+           (60 mm) is reached. If Liquid is detected, submerge with 0.2 mm.                
+RESPONSE:  none
+GENERATED ERRORS:  (3) invalid operand, (5) device not implemented, (7) device not init, (9) no liquid detected, (10) drive no load, (11) not enough liquid MDT, (20) no liquid exit detected, (24) pulse Ilid.                    
+  '''
+
+elif action == "move_detect":
+
+##A1MDT170,20,1000,600
+    
+  t.do_cmd("MDT255,20,1480,1100","A1")
+
+
+  '''
+  PIF
+FAKE INITIALIZATION  X/Y/Z - AXIS:               
+The PIF command  tells the firmware that all axis have been initialized, however, no mechanical initialization is executed. The current position coordinates of each axis are still valid. If power is disconnected and turned on, using the PIF command will give all axis position the position value of  zero. CAUTION: Incorrect usage of this command may damage the Instrument.
+EXAMPLE: #A1PIF
+Fake initialization of the Arm.
+RESPONSE: none
+GENERATED ERRORS: none.
+  '''
+
+
+
+  '''
+  PAA
+X, Y, Ys, Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8
+POSITION ABSOLUTE FOR ALL AXIS:
+The PAA command moves the X/Y/Z-axis to the entered coordinates in the absolute field. After using this command, the Z-travel heights, set with the SHZ command is in effect. If no Z-travels are set by SHZ command the Z-drives move to init position while traveling. The number of Z parameter depends on the number of installed tips.
+X:	distance in 0.1 mm  [(-InitOffset + 10)...X-Range set by SRA cmd] 
+Y:	distance in 0.1 mm  [(-InitOffset + 10)...Y-Range set by SRA cmd]  of tip 1.
+Ys:	space distance in 0.1 mm [90...380]  min. distance 9 mm,  max. distance 38 mm.
+Zi:	distance in 0.1 mm [(-InitOffset + 10)...Z-Range set by SRA cmd] of tip i [1..8]
+EXAMPLE: #A1PAA1000,200,100,500,500,500,500,500,500,500,500
+Moves all axis to the specified coordinates. The tips moves up to Z-travel position while moving.
+RESPONSE: none
+GENERATED ERRORS:  (3) invalid operand, (7) device not init, (10) drive no load, (13) Arm collision avoided with PosId, (17) Arm collision avoided with ROMA.
+
+
+  '''
+  
+  
+  '''
+  PSY
+Ys
+Y-SPACING OF TIPS:
+Spaces the eight tips in Y-direction. The Y-space axis parameter is the distance from tip to tip.	
+Ys:	space in 0.1 mm [90...380]  min. distance 9 mm,  max. distance 38 mm
+EXAMPLE: #A1PSY360
+Move to tip to tip space with 36 mm.
+RESPONSE: none
+GENERATED ERRORS:  (3) invalid operand, (7) device not init, (10) drive no load.
+
+
+
+  '''
+
+elif action == "liha_spacey":
+  
+  xpos=sys.argv[2]
+  
+  #t.do_cmd("PRZ"+",".join([str(50) for x in range(0,8)]),"A1")
+  t.do_cmd("PSY"+xpos,"A1")
+
+elif action == "flush":
+  
+  print "attempting to flush all commands and responses"
+  
+  #t.do_cmd("PRZ"+",".join([str(50) for x in range(0,8)]),"A1")
+  t.do_flush()
+
+
+  
+  
+elif action == "read":
+  print "reading buffer"
+
+
+
+    
+elif True:
+  print t.nextseq()
+  print t.nextseq()
+  print t.nextseq()
+
+
+t.close()
+
+
